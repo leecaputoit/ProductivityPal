@@ -5,6 +5,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { TransitionPresets } from '@react-navigation/stack';
 import HomeScreen from './screens/Home';
 import DashboardScreen from './screens/Dashboard';
+import Icon from 'react-native-vector-icons/FontAwesome';
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -20,8 +21,24 @@ function Tabs() {
         tabBarActiveTintColor: 'white'
       }}
     >
-      <Tab.Screen name = 'Home' component={HomeScreen} />
-      <Tab.Screen name = 'Dashboard' component={DashboardScreen} />
+      <Tab.Screen 
+        name = 'Home' 
+        component={HomeScreen} 
+        options={{
+          tabBarIcon: ({focused}) => (
+            <Icon name="home" size={30} color={focused ? 'white' : 'gray'} />
+          )
+        }}
+      />
+      <Tab.Screen 
+        name = 'Dashboard' 
+        component={DashboardScreen} 
+        options={{
+          tabBarIcon: ({focused}) => (
+            <Icon name="user" size={30} color={focused ? 'white' : 'gray'} />
+          )
+        }}
+      />
     </Tab.Navigator>
   );
 }
