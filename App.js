@@ -6,6 +6,7 @@ import { TransitionPresets } from '@react-navigation/stack';
 import HomeScreen from './screens/Home';
 import DashboardScreen from './screens/Dashboard';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import AddTaskScreen from './screens/AddTask';
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -54,6 +55,7 @@ export default function App() {
         }}
       >
         <Stack.Screen name = 'Base' component={Tabs} options={{ headerShown: false }} />
+        <Stack.Screen name = 'AddTask' component={AddTaskScreen} options={{}} />
       </Stack.Navigator>
     </NavigationContainer>
   );
