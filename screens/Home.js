@@ -35,7 +35,6 @@ export default function HomeScreen({navigation}) {
         navigation.addListener(
             'focus',
             payload => {
-                ToastAndroid.show(dateSelected, ToastAndroid.SHORT)
                 getUsrLvl();
                 getTaskList();
             }

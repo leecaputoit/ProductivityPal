@@ -1,4 +1,4 @@
-import { StyleSheet, Text, ToastAndroid, View, Alert } from 'react-native';
+import { StyleSheet, Text, ToastAndroid, View } from 'react-native';
 import { Input } from '@rneui/themed'
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import React, {useState, useRef, useEffect} from 'react';
@@ -8,14 +8,16 @@ import DateTimePicker from '@react-native-community/datetimepicker';
 import DropDownPicker from 'react-native-dropdown-picker';
 
 export default function AddTaskScreen({ route, navigation }) {
+    let task = route.params.task;
+
     const [taskDesc, setTaskDesc] = useState('');
     const [location, setLocation] = useState('');
     const [timePickerVisible, setTimePickerVisibility] = useState(false);
     const [time, setTime] = useState(false);
-    const [timeResultVisible, setTimeResultVisibility] = useState(false);
-    const [timeResult, setTimeResult] = useState('');
+    const [timeResultVisible, setTimeResultVisibility] = useState(true);
+    const [timeResult, setTimeResult] = useState(task.time.getHours() + ':' + task.time.getMinutes());
     const [openDDP, setOpenDDP] = useState(false);
-    const [repeatSetting, setRepeatSetting] = useState('');
+    const [repeatSetting, setRepeatSetting] = useState(task.repeatSetting);
     const [ddpItems, setDDPItems] = useState([
         {label: 'Don\'t repeat', value: '0'},
         {label: 'Every hour', value: '1'},
@@ -25,63 +27,54 @@ export default function AddTaskScreen({ route, navigation }) {
     const [notes, setNotes] = useState('');
 
     let saveTask = async () => {
-        if(taskDesc.length === 0){
-            Alert.alert('Missing required field(s)', 'Task description is required');
-        }else if(!time){
-            Alert.alert('Missing required field(s)', 'Task deadline is required');
-        }else if(repeatSetting.length === 0){
-            Alert.alert('Missing required field(s)', 'Repeat setting is required');
-        }else{
-            // create new task object
-            let task = {
-                id: Math.random() * 1000,
-                taskDesc: taskDesc,
-                location: location,
-                time: time,
-                repeatSetting: repeatSetting,
-                notes: notes,
-                date: route.params.date
-            }
-    
-            // get the task list associated with the current date 
-            // route.date here is passed in from the previous screeen and is a stringified date
-            let curTaskList = await retrieve(route.params.date);
-            // if it exists, we add the task to it
-            if(curTaskList != null){
-                // de-serialize the task list
-                curTaskList = JSON.parse(curTaskList);
-                // add task object to task list
-                curTaskList.push(task);
-                // save the updated task list to storage
-                await save(route.params.date, JSON.stringify(curTaskList));
-            }else{
-                // if it doesn't exist, we create a new list and save it with the new task
-                let taskList = [task];
-                await save(route.params.date, JSON.stringify(taskList))
-            }
-    
-            navigation.goBack();
+        // create new task object
+        let task = {
+            id: Math.random() * 1000,
+            taskDesc: taskDesc,
+            location: location,
+            time: time,
+            repeatSetting: repeatSetting,
+            notes: notes
         }
+
+        // get the task list associated with the current date 
+        // route.date here is passed in from the previous screeen and is a stringified date
+        let curTaskList = await retrieve(route.params.date);
+        // if it exists, we add the task to it
+        if(curTaskList != null){
+            // de-serialize the task list
+            curTaskList = JSON.parse(curTaskList);
+            // add task object to task list
+            curTaskList.push(task);
+            // save the updated task list to storage
+            await save(route.params.date, JSON.stringify(curTaskList));
+        }else{
+            // if it doesn't exist, we create a new list and save it with the new task
+            let taskList = [task];
+            await save(route.params.date, JSON.stringify(taskList))
+        }
+
+        navigation.goBack();
     }
 
     return (
         <View style={styles.container}>
             <Text style={styles.dateText}>{route.params.date}</Text>
             <Input 
-                placeholder='Task Description'
+                value={task.taskDesc}
                 inputStyle={styles.inputFields}
                 leftIcon={<Icon name="event-note" size={20} color='#2fd281' style={{paddingTop: '5%'}}/>}
                 onChangeText={value => setTaskDesc(value)}
             />
             <Input 
-                placeholder='Location'
+                value={task.location}
                 inputStyle={styles.inputFields}
                 leftIcon={<Icon name="location-on" size={20} color='#2fd281' style={{paddingTop: '5%'}}/>}
                 onChangeText={value => setLocation(value)}
             />
 
             <Input 
-                placeholder='Notes'
+                value={task.notes}
                 inputStyle={styles.inputFields}
                 leftIcon={<Icon name="note-alt" size={20} color='#2fd281' style={{paddingTop: '5%'}}/>}
                 onChangeText={value => setNotes(value)}
@@ -133,7 +126,6 @@ export default function AddTaskScreen({ route, navigation }) {
                     setItems={setDDPItems}
                     containerStyle={{width: '90%'}}
                     style={{backgroudnColor: '#2fd281'}}
-                    placeholder='Select a repeat setting'
                 />
             </View>
 
