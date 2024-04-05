@@ -3,7 +3,7 @@ import { Input } from '@rneui/themed'
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import React, {useState, useRef, useEffect} from 'react';
 import { Button } from '@rneui/themed'
-import { save, retrieve } from '../utils/utility';
+import { save, retrieve, toTimeString } from '../utils/utility';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import DropDownPicker from 'react-native-dropdown-picker';
 
@@ -17,7 +17,7 @@ export default function AddTaskScreen({ route, navigation }) {
     const [openDDP, setOpenDDP] = useState(false);
     const [repeatSetting, setRepeatSetting] = useState('');
     const [ddpItems, setDDPItems] = useState([
-        {label: 'Don\'t repeat', value: '0'},
+        {label: 'Don\'t repeat (notfies an hour before deadline)', value: '0'},
         {label: 'Every hour', value: '1'},
         {label: 'Every day', value: '2'},
         {label: 'Every week', value: '3'}
@@ -37,7 +37,7 @@ export default function AddTaskScreen({ route, navigation }) {
                 id: Math.random() * 1000,
                 taskDesc: taskDesc,
                 location: location,
-                time: time,
+                time: time.toJSON(),
                 repeatSetting: repeatSetting,
                 notes: notes,
                 date: route.params.date
@@ -60,7 +60,7 @@ export default function AddTaskScreen({ route, navigation }) {
                 await save(route.params.date, JSON.stringify(taskList))
             }
     
-            navigation.goBack();
+            navigation.navigate("Home", {workaround: true});
         }
     }
 
@@ -107,7 +107,7 @@ export default function AddTaskScreen({ route, navigation }) {
                         const {type, x} = event;
                         if(type === 'set'){
                             setTimePickerVisibility(false)
-                            setTimeResult(date.getHours() + ':' + date.getMinutes());
+                            setTimeResult(toTimeString(date));
                             setTimeResultVisibility(true);
                             setTime(date);
                         }else{
@@ -119,7 +119,7 @@ export default function AddTaskScreen({ route, navigation }) {
 
             {
                 timeResultVisible &&
-                <Text style={{fontSize: 25, alignSelf: 'center', marginTop: '3%', color: '#2fd281'}}>{timeResult}</Text>
+                <Text style={{fontSize: 25, alignSelf: 'center', marginTop: '3%', color: '#2fd281'}}>Deadline Set: <Text style={{fontWeight: 'bold'}}>{timeResult}</Text></Text>
             }
 
             <View style={{flex: 1, flexDirection: 'row', width: '100%', justifyContent: 'center', marginTop: '7%'}}> 
@@ -133,7 +133,8 @@ export default function AddTaskScreen({ route, navigation }) {
                     setItems={setDDPItems}
                     containerStyle={{width: '90%'}}
                     style={{backgroudnColor: '#2fd281'}}
-                    placeholder='Select a repeat setting'
+                    placeholder='Select a repeat setting (repeatedly notify the user until deadline)'
+                    zIndex={0}
                 />
             </View>
 

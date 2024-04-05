@@ -1,21 +1,41 @@
-import {Dimensions, StyleSheet, Text, View, FlatList, ToastAndroid} from 'react-native';
+import {Dimensions, StyleSheet, Text, View, FlatList, ToastAndroid, TouchableOpacity} from 'react-native';
 import { Button } from '@rneui/themed';
 import React, {useState, useRef, useEffect} from 'react';
 import CalendarPicker from "react-native-calendar-picker";
 import * as Progress from 'react-native-progress';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import { save, retrieve, clearStorage } from '../utils/utility';
+import { save, retrieve, clearStorage, toTimeString, calcUsrLvl, initUsrStats, calcLvlUpProgress } from '../utils/utility';
+import { Calendar } from 'react-native-calendars';
+import { useFocusEffect, useIsFocused } from '@react-navigation/native';
 
-export default function HomeScreen({navigation}) {
-    const [dateSelected, setDateSelected] = useState(new Date().toDateString());
-    const [userLevel, setUserLevel] = useState('LV.0');
+export default function HomeScreen({route, navigation}) {
+    let getTodayDateString = () => {
+        let today = new Date();
+        let todayDate = '' + today.getDate();
+        let todayMonth = (today.getMonth() + 1) + '';
+
+        if(todayDate.length == 1){
+            todayDate = '0' + todayDate;
+        }
+        if(todayMonth.length == 1){
+            todayMonth = '0' + todayMonth;
+        }
+
+        return today.getFullYear() + '-' + todayMonth + '-' + todayDate;
+    } 
+
+    const [dateSelected, setDateSelected] = useState(getTodayDateString());
+    const [userLevel, setUserLevel] = useState('LV.???');
     const [tasks, setTasks] = useState([]);
+    const [markedDates, setMarkedDates] = useState({[dateSelected]: {selected: true}})
+    const [progressVal, setProgressVal] = useState(0);
 
     let getUsrLvl = async () => {
-        let usrLvl = await retrieve('level');
-        if(usrLvl != null){
-            setUserLevel('LV.' + usrLvl);
-        }
+        await initUsrStats();
+        let lvl = await calcUsrLvl();
+        setUserLevel('LV.' + lvl);
+        let progress = await calcLvlUpProgress();
+        setProgressVal(progress);
     }
 
     let getTaskList = async () => {
@@ -30,25 +50,54 @@ export default function HomeScreen({navigation}) {
         }
     }
 
-    useEffect(() => {
-        // ensure that the home page is re-rendered when returning from an AddTask page
-        navigation.addListener(
-            'focus',
-            payload => {
-                getUsrLvl();
-                getTaskList();
+    let markDate = async (date) => {
+        let taskList = await retrieve(dateSelected);
+        // if it exists, we check if it is not empty
+        if(taskList != null){
+            // de-serialize the task list from storage
+            taskList = JSON.parse(taskList);
+            if(taskList.length > 0){
+                // since the current date has one or more tasks in it, we mark it with a dot
+                // have to update markedDates object
+                let temp = {...markedDates}
+                temp[date]['marked'] = true;
+                setMarkedDates(temp);
+            }else{
+                // since the current date's task list is empty, we remove the dot if it's marked
+                let temp = {...markedDates}
+                temp[date]['marked'] = false;
+                setMarkedDates(temp);
             }
-        )
+        }
+    }
 
+    // so that user level and task list contents are updated whenever the home screen is focused
+    useEffect(
+        () => {
+           getUsrLvl();
+           getTaskList();
+           markDate(dateSelected);
+        }, [route]
+      );
+
+    useEffect(() => {
         getTaskList();
     }, [dateSelected])
 
-    let taskItem = (item) => (
-        <View style={styles.taskItemStyles}>
-            <Text>{item.taskDesc}</Text>
-            <Text>placeholder</Text>
-        </View>
-    )
+    let taskItem = (item) => {
+        let time = new Date(item.time);
+        return (
+            <TouchableOpacity 
+                style={styles.taskItemStyles}
+                onPress={() => {
+                    navigation.navigate('Edit Task', {task: item});
+                }}
+            >
+                <Text>{item.taskDesc}</Text>
+                <Text style={{color: '#2fd281'}}>{toTimeString(time)}</Text>
+            </TouchableOpacity>
+            )
+    }
 
     //dummy function for adding placeholder tasks
     let addTask = () =>{
@@ -66,11 +115,11 @@ export default function HomeScreen({navigation}) {
                 <View style={styles.topBanner1}>
                     <Progress.Circle 
                         size={120} 
-                        progress={0.75} 
+                        progress={progressVal} 
                         color='white'
                         showsText
                         thickness={5}
-                        formatText={() => '75%'}
+                        formatText={() => Math.floor(progressVal * 100) + '%'}
                         style={{marginLeft: '7%', marginTop: '2%'}}
                     />
                     <Text
@@ -79,13 +128,38 @@ export default function HomeScreen({navigation}) {
                 </View>
             </View>
             <View style={styles.calendarContainerStyle}>
-                <CalendarPicker 
+                {/* <CalendarPicker 
                     todayBackgroundColor='#2fd281'
-                    onDateChange={date => {
-                        setDateSelected(date.toDateString());
-                    }}
-                    selectedDayColor='white'
+                    onDateChange={date => setDateSelected(date.toDateString())}
                     height={Dimensions.get('window').height * 0.45}
+                    selectedDayColor='transparent'
+                /> */}
+                <Calendar 
+                    onDayPress={day => {
+                        let prevSelected = dateSelected;
+                        setDateSelected(day.dateString);
+                        // update markedDates array so that the currently selected is highlighted
+                        let temp = {...markedDates};
+                        if(prevSelected != undefined){
+                            delete temp[prevSelected]['selected'];
+                        }
+                        if(temp[day.dateString] != undefined){
+                            temp[day.dateString]['selected'] = true;
+                        }else{
+                            temp[day.dateString] = {selected: true};
+                        }
+                        setMarkedDates(temp);
+                      }}
+                    enableSwipeMonths={true}
+                    theme={{
+                        todayTextColor: '#2fd281',
+                        selectedDayBackgroundColor: '#2fd281',
+                        selectedDayTextColor: '#ffffff',
+                        selectedDotColor: '#ffffff',
+                        dotColor: '#00adf5',
+                        arrowColor: '#2fd281',
+                    }}
+                    markedDates={markedDates}
                 />
             </View>
             <View style={styles.bottomContainer}>
@@ -101,7 +175,7 @@ export default function HomeScreen({navigation}) {
                     <Button
                         icon={<Icon name="format-list-bulleted-add" size={20} color='white' />}
                         buttonStyle={{backgroundColor: '#2fd281'}}
-                        onPress={() => navigation.navigate('AddTask', {date: dateSelected})}
+                        onPress={() => navigation.navigate('Add Task', {date: dateSelected})}
                     />
                 </View>
                 <View style={styles.taskListStyles}>
@@ -135,7 +209,7 @@ const styles = StyleSheet.create({
       paddingTop: '10%'
     },
     calendarContainerStyle: {
-      marginBottom: '6%'
+      marginBottom: '4%'
     },
     topBannerContainerStyle: {
         borderRadius: 25,

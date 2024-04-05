@@ -7,6 +7,9 @@ import HomeScreen from './screens/Home';
 import DashboardScreen from './screens/Dashboard';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import AddTaskScreen from './screens/AddTask';
+import EditTaskScreen from './screens/EditTask';
+import { retrieve, save, clearStorage } from './utils/utility';
+import { useEffect } from 'react';
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -45,6 +48,8 @@ function Tabs() {
 }
 
 export default function App() {
+  clearStorage();
+
   return (
     <NavigationContainer>
       <Stack.Navigator 
@@ -55,7 +60,8 @@ export default function App() {
         }}
       >
         <Stack.Screen name = 'Base' component={Tabs} options={{ headerShown: false }} />
-        <Stack.Screen name = 'AddTask' component={AddTaskScreen} options={{}} />
+        <Stack.Screen name = 'Add Task' component={AddTaskScreen} options={{}} />
+        <Stack.Screen name = 'Edit Task' component={EditTaskScreen} options={{}} />
       </Stack.Navigator>
     </NavigationContainer>
   );
