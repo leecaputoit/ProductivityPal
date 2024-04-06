@@ -46,11 +46,7 @@ export const calcUsrLvl = async () => {
   let usrExp = await retrieve('exp');
     if(usrExp != null){
         // for now each level requires 50 experience points
-        // the user is by default level 1
         let lvl = Math.floor(Number(usrExp) / 50);
-        if(lvl === 0){
-            lvl = 1;
-        }
         return lvl;
     }
 }
@@ -59,11 +55,10 @@ export const calcLvlUpProgress = async () => {
   let usrExp = await retrieve('exp');
     if(usrExp != null){
         // for now each level requires 50 experience points
-        // the user is by default level 1
         let lvl = Math.floor(Number(usrExp) / 50);
         let nextLvl = lvl + 1;
         let nextLvlExp = nextLvl * 50;
-        let progress = usrExp / nextLvlExp;
+        let progress = (Number(usrExp) - (lvl * 50)) / 50;
         return progress;
     }
 }
@@ -78,4 +73,18 @@ export const initUsrStats = async () => {
     if(usrGold == null){
       await save('gold', 0);
     }
+}
+
+export const addExp = async (amount) => {
+  let usrExp = await retrieve('exp');
+  if(usrExp != null){
+    await save('exp', Number(usrExp) + amount);
+  }
+}
+
+export const addGold = async (amount) => {
+  let usrGold = await retrieve('gold');
+  if(usrGold != null){
+    await save('gold', Number(usrGold) + amount);
+  }
 }

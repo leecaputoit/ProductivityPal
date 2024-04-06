@@ -10,6 +10,7 @@ import AddTaskScreen from './screens/AddTask';
 import EditTaskScreen from './screens/EditTask';
 import { retrieve, save, clearStorage } from './utils/utility';
 import { useEffect } from 'react';
+import TaskCompletionScreen from './screens/TaskComplete';
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -62,6 +63,7 @@ export default function App() {
         <Stack.Screen name = 'Base' component={Tabs} options={{ headerShown: false }} />
         <Stack.Screen name = 'Add Task' component={AddTaskScreen} options={{}} />
         <Stack.Screen name = 'Edit Task' component={EditTaskScreen} options={{}} />
+        <Stack.Screen name = 'Task Completion' component={TaskCompletionScreen} options={{ headerShown: false, ...TransitionPresets.ScaleFromCenterAndroid}} />
       </Stack.Navigator>
     </NavigationContainer>
   );

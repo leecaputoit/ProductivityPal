@@ -7,6 +7,7 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 import { save, retrieve, clearStorage, toTimeString, calcUsrLvl, initUsrStats, calcLvlUpProgress } from '../utils/utility';
 import { Calendar } from 'react-native-calendars';
 import { useFocusEffect, useIsFocused } from '@react-navigation/native';
+import FAIcon from 'react-native-vector-icons/FontAwesome5';
 
 export default function HomeScreen({route, navigation}) {
     let getTodayDateString = () => {
@@ -29,13 +30,18 @@ export default function HomeScreen({route, navigation}) {
     const [tasks, setTasks] = useState([]);
     const [markedDates, setMarkedDates] = useState({[dateSelected]: {selected: true}})
     const [progressVal, setProgressVal] = useState(0);
+    const [userGold, setUserGold] = useState(0);
 
-    let getUsrLvl = async () => {
+    let getUsrStats = async () => {
         await initUsrStats();
         let lvl = await calcUsrLvl();
         setUserLevel('LV.' + lvl);
         let progress = await calcLvlUpProgress();
-        setProgressVal(progress);
+        setProgressVal(Number(progress));
+        let gold = await retrieve('gold');
+        if(gold != null){
+            setUserGold(Number(gold));
+        }
     }
 
     let getTaskList = async () => {
@@ -74,7 +80,7 @@ export default function HomeScreen({route, navigation}) {
     // so that user level and task list contents are updated whenever the home screen is focused
     useEffect(
         () => {
-           getUsrLvl();
+           getUsrStats();
            getTaskList();
            markDate(dateSelected);
         }, [route]
@@ -93,25 +99,29 @@ export default function HomeScreen({route, navigation}) {
                     navigation.navigate('Edit Task', {task: item});
                 }}
             >
-                <Text>{item.taskDesc}</Text>
-                <Text style={{color: '#2fd281'}}>{toTimeString(time)}</Text>
+                <View style={{flexDirection: 'row'}}>
+                    <Icon name="radio-button-unchecked" size={15} color='#2fd281' style={{marginRight: '10%', alignSelf:'center'}}/>
+                    <Text style={{fontSize: 17}}>{item.taskDesc}</Text>
+                </View>
+                <Text style={{color: '#2fd281', fontSize: 17}}>{toTimeString(time)}</Text>
             </TouchableOpacity>
             )
-    }
-
-    //dummy function for adding placeholder tasks
-    let addTask = () =>{
-        setTasks([...tasks, {id: Math.random() * 1000}])
     }
 
     return (
         <View style={styles.container}>   
             <View style={styles.topBannerContainerStyle}> 
-                <Text
-                    style={{color: 'white', fontWeight: 'bold', fontSize: 25, marginLeft: '5%', marginTop: '2%'}}
-                >{
-                    userLevel
-                }</Text>
+                <View style={{flexDirection:'row', justifyContent: 'space-between'}}>
+                    <Text
+                        style={{color: 'white', fontWeight: 'bold', fontSize: 25, marginLeft: '5%', marginTop: '2%'}}
+                    >{
+                        userLevel
+                    }</Text>
+                    <View style={{flexDirection:'row'}}>
+                        <FAIcon name="coins" size={20} color='#ffd700' style={{marginRight: '2%', alignSelf:'center'}}/>
+                        <Text style={{color: 'white', fontWeight: 'bold', fontSize: 25, marginRight: '3%', marginTop: '2%', alignSelf: 'center'}}>{' ' + userGold}</Text>
+                    </View>
+                </View>
                 <View style={styles.topBanner1}>
                     <Progress.Circle 
                         size={120} 
@@ -123,7 +133,7 @@ export default function HomeScreen({route, navigation}) {
                         style={{marginLeft: '7%', marginTop: '2%'}}
                     />
                     <Text
-                        style={{width: '45%', fontSize: 30, color: 'white', marginRight: '2%'}}
+                        style={{width: '50%', fontSize: 30, color: 'white', marginRight: '2%'}}
                     >Finish more tasks to advance to the next level!</Text>
                 </View>
             </View>
@@ -209,7 +219,7 @@ const styles = StyleSheet.create({
       paddingTop: '10%'
     },
     calendarContainerStyle: {
-      marginBottom: '4%'
+      marginBottom: '1%'
     },
     topBannerContainerStyle: {
         borderRadius: 25,
@@ -226,12 +236,11 @@ const styles = StyleSheet.create({
     },
     bottomContainer: {
         flex: 1,
-        justifyContent: 'flex-end'
+        justifyContent: 'flex-end',
         
     }
     ,
     bottomTitleContainer: {
-        flexGrow: 1,
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'flex-start',
@@ -240,7 +249,9 @@ const styles = StyleSheet.create({
     },
     taskListStyles: {
         flexGrow: 2,
-        marginTop: '2%'
+        marginTop: '2%',
+        justifyContent: 'center',
+        height: '20%'
         
     },
     taskItemStyles: {
@@ -255,7 +266,8 @@ const styles = StyleSheet.create({
         marginBottom: '5%',
         elevation: 5,
         shadowColor: '#52006A',
-        backgroundColor: 'white'
+        backgroundColor: 'white',
+
     }
   });
   

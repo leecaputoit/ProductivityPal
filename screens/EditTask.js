@@ -3,7 +3,7 @@ import { Input } from '@rneui/themed'
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import React, {useState, useRef, useEffect} from 'react';
 import { Button } from '@rneui/themed'
-import { save, retrieve, toTimeString } from '../utils/utility';
+import { save, retrieve, toTimeString, addExp, addGold } from '../utils/utility';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import DropDownPicker from 'react-native-dropdown-picker';
 
@@ -70,7 +70,7 @@ export default function AddTaskScreen({ route, navigation }) {
         }
     }
 
-    let deleteTask = async () => {
+    let deleteTask = async (returnToHome) => {
         // get the task list associated with the current date 
         let curTaskList = await retrieve(task.date);
         // if it exists, we remove the orginal task from the list
@@ -86,6 +86,17 @@ export default function AddTaskScreen({ route, navigation }) {
         }
 
         navigation.navigate('Home', {workaround: true});
+    }
+
+    let markComplete = async () => {
+        let taskName = taskDesc;
+        // delete the task first
+        await deleteTask();
+        // add task completion rewards
+        await addExp(20);
+        await addGold(20);
+        // show the task completion screen
+        navigation.navigate('Task Completion', {taskDesc: taskName});
     }
 
     return (
@@ -174,10 +185,10 @@ export default function AddTaskScreen({ route, navigation }) {
                 </Button>
                 <Button  
                     type='solid'
-                    onPress={() => {}}
+                    onPress={() => {markComplete()}}
                     containerStyle={styles.saveButton}
                     buttonStyle={{paddingVertical:'14%'}}
-                    color='#d4af37'
+                    color='#ffd700'
                 >
                     Mark Complete
                 </Button>
