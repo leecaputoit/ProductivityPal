@@ -1,4 +1,4 @@
-import {Dimensions, StyleSheet, Text, View, FlatList, ToastAndroid, TouchableOpacity} from 'react-native';
+import {Dimensions, StyleSheet, Text, View, FlatList, ToastAndroid, TouchableOpacity, Image} from 'react-native';
 import { Button } from '@rneui/themed';
 import React, {useState, useRef, useEffect} from 'react';
 import CalendarPicker from "react-native-calendar-picker";
@@ -8,6 +8,8 @@ import { save, retrieve, clearStorage, toTimeString, calcUsrLvl, initUsrStats, c
 import { Calendar } from 'react-native-calendars';
 import { useFocusEffect, useIsFocused } from '@react-navigation/native';
 import FAIcon from 'react-native-vector-icons/FontAwesome5';
+import coin_icon from "../assets/coin_icon.png";
+import { profileStyles } from "./styles/dashboard.styles";
 
 export default function HomeScreen({route, navigation}) {
     let getTodayDateString = () => {
@@ -86,6 +88,16 @@ export default function HomeScreen({route, navigation}) {
         }, [route]
       );
 
+      useEffect(
+        () => {
+          const unsub = navigation.addListener('focus', () => {
+            getUsrStats();
+          })
+    
+          return unsub;
+        }, []
+      );
+
     useEffect(() => {
         getTaskList();
     }, [dateSelected])
@@ -118,7 +130,7 @@ export default function HomeScreen({route, navigation}) {
                         userLevel
                     }</Text>
                     <View style={{flexDirection:'row'}}>
-                        <FAIcon name="coins" size={20} color='#ffd700' style={{marginRight: '2%', alignSelf:'center'}}/>
+                        <Image source={coin_icon} style={{...profileStyles.coinIcon, alignSelf: 'center'}} />
                         <Text style={{color: 'white', fontWeight: 'bold', fontSize: 25, marginRight: '3%', marginTop: '2%', alignSelf: 'center'}}>{' ' + userGold}</Text>
                     </View>
                 </View>

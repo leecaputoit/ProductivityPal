@@ -33,7 +33,7 @@ export const profileStyles = StyleSheet.create({
   coinIcon: {
     width: 20,
     height: 20,
-    marginRight: 3,
+    marginRight: 2,
   },
 });
 
@@ -68,7 +68,7 @@ export const levelProgressStyles = StyleSheet.create({
   progressBar: {
     width: 100,
     height: 7,
-    backgroundColor: "#ccc",
+    backgroundColor: "transparent",
   },
 });
 

@@ -73,6 +73,37 @@ export const initUsrStats = async () => {
     if(usrGold == null){
       await save('gold', 0);
     }
+
+    let badges = await retrieve('badges');
+    if(badges == null) {
+      await save('badges', [require("../assets/yellow_badge.jpeg")]);
+    }
+
+    let availableBadges = await retrieve('a_badges');
+    if(availableBadges == null){
+      const a_badges = [
+        {
+          image: require("../assets/poli_badge.jpg"),
+          name: "Purchase with 20 coins",
+          val: 20,
+          id: 1
+        },
+        {
+          image: require("../assets/winner_cup.jpeg"),
+          name: "Purchase with 20 coins",
+          val: 20,
+          id: 2
+        },
+        {
+          image: require("../assets/winner_c.jpeg"),
+          name: "Purchase with 20 coins",
+          val: 20,
+          id: 3
+        },
+      ];
+
+      await save('a_badges', a_badges);
+    }
 }
 
 export const addExp = async (amount) => {
