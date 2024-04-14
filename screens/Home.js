@@ -10,6 +10,7 @@ import { useFocusEffect, useIsFocused } from '@react-navigation/native';
 import FAIcon from 'react-native-vector-icons/FontAwesome5';
 import coin_icon from "../assets/coin_icon.png";
 import { profileStyles } from "./styles/dashboard.styles";
+import { APP_MAIN_BG_COLOR } from '../utils/constants';
 
 export default function HomeScreen({route, navigation}) {
     let getTodayDateString = () => {
@@ -112,10 +113,10 @@ export default function HomeScreen({route, navigation}) {
                 }}
             >
                 <View style={{flexDirection: 'row'}}>
-                    <Icon name="radio-button-unchecked" size={15} color='#2fd281' style={{marginRight: '10%', alignSelf:'center'}}/>
+                    <Icon name="radio-button-unchecked" size={15} color={APP_MAIN_BG_COLOR} style={{marginRight: '10%', alignSelf:'center'}}/>
                     <Text style={{fontSize: 17}}>{item.taskDesc}</Text>
                 </View>
-                <Text style={{color: '#2fd281', fontSize: 17}}>{toTimeString(time)}</Text>
+                <Text style={{color: APP_MAIN_BG_COLOR, fontSize: 17}}>{toTimeString(time)}</Text>
             </TouchableOpacity>
             )
     }
@@ -151,7 +152,7 @@ export default function HomeScreen({route, navigation}) {
             </View>
             <View style={styles.calendarContainerStyle}>
                 {/* <CalendarPicker 
-                    todayBackgroundColor='#2fd281'
+                    todayBackgroundColor=APP_MAIN_BG_COLOR
                     onDateChange={date => setDateSelected(date.toDateString())}
                     height={Dimensions.get('window').height * 0.45}
                     selectedDayColor='transparent'
@@ -174,12 +175,12 @@ export default function HomeScreen({route, navigation}) {
                       }}
                     enableSwipeMonths={true}
                     theme={{
-                        todayTextColor: '#2fd281',
-                        selectedDayBackgroundColor: '#2fd281',
+                        todayTextColor: APP_MAIN_BG_COLOR,
+                        selectedDayBackgroundColor: APP_MAIN_BG_COLOR,
                         selectedDayTextColor: '#ffffff',
                         selectedDotColor: '#ffffff',
                         dotColor: '#00adf5',
-                        arrowColor: '#2fd281',
+                        arrowColor: APP_MAIN_BG_COLOR,
                     }}
                     markedDates={markedDates}
                 />
@@ -188,7 +189,7 @@ export default function HomeScreen({route, navigation}) {
                 <View style={styles.bottomTitleContainer}>
                     <Text style={{
                             fontSize: 20, 
-                            color: '#2fd281', 
+                            color: APP_MAIN_BG_COLOR, 
                             paddingTop: '2%', 
                             fontWeight: 'bold',
                         }}>
@@ -196,7 +197,7 @@ export default function HomeScreen({route, navigation}) {
                     </Text>
                     <Button
                         icon={<Icon name="format-list-bulleted-add" size={20} color='white' />}
-                        buttonStyle={{backgroundColor: '#2fd281'}}
+                        buttonStyle={{backgroundColor: APP_MAIN_BG_COLOR}}
                         onPress={() => navigation.navigate('Add Task', {date: dateSelected})}
                     />
                 </View>
@@ -235,7 +236,7 @@ const styles = StyleSheet.create({
     },
     topBannerContainerStyle: {
         borderRadius: 25,
-        backgroundColor: '#2fd281',
+        backgroundColor: APP_MAIN_BG_COLOR,
         width: '95%',
         height: '25%',
         marginBottom: '3%',

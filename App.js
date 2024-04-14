@@ -11,6 +11,7 @@ import EditTaskScreen from './screens/EditTask';
 import { retrieve, save, clearStorage } from './utils/utility';
 import { useEffect } from 'react';
 import TaskCompletionScreen from './screens/TaskComplete';
+import { APP_MAIN_BG_COLOR } from './utils/constants';
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -21,8 +22,8 @@ function Tabs() {
       initialRouteName='Home'
       screenOptions={{
         headerShown: false,
-        tabBarActiveBackgroundColor: '#2fd281',
-        tabBarInactiveBackgroundColor: '#2fd281',
+        tabBarActiveBackgroundColor: APP_MAIN_BG_COLOR,
+        tabBarInactiveBackgroundColor: APP_MAIN_BG_COLOR,
         tabBarActiveTintColor: 'white'
       }}
     >

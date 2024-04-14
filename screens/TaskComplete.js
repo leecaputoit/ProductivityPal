@@ -2,6 +2,7 @@ import { StyleSheet, Text, View } from 'react-native';
 import Icon from 'react-native-vector-icons/Fontisto';
 import { Button } from '@rneui/themed';
 import { addExp, addGold } from '../utils/utility';
+import { APP_MAIN_BG_COLOR } from '../utils/constants';
 
 export default function TaskCompletionScreen({ route, navigation }) {
     return (
@@ -32,7 +33,7 @@ export default function TaskCompletionScreen({ route, navigation }) {
                     buttonStyle={{paddingVertical:'5%', paddingHorizontal: '20%'}}
                     color='white'
                     radius='lg'
-                    titleStyle={{color:'#2fd281', fontWeight: 'bold', fontSize: 20}}
+                    titleStyle={{color:APP_MAIN_BG_COLOR, fontWeight: 'bold', fontSize: 20}}
             >
                 OK
             </Button>
@@ -43,7 +44,7 @@ export default function TaskCompletionScreen({ route, navigation }) {
 const styles = StyleSheet.create({
     container: {
       flex: 1,
-      backgroundColor: '#2fd281',
+      backgroundColor: APP_MAIN_BG_COLOR,
       alignItems: 'center',
       justifyContent: 'center',
     },

@@ -6,6 +6,7 @@ import { Button } from '@rneui/themed'
 import { save, retrieve, toTimeString, addExp, addGold } from '../utils/utility';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import DropDownPicker from 'react-native-dropdown-picker';
+import { APP_MAIN_BG_COLOR } from '../utils/constants';
 
 export default function AddTaskScreen({ route, navigation }) {
     let task = route.params.task;
@@ -105,28 +106,28 @@ export default function AddTaskScreen({ route, navigation }) {
             <Input 
                 value={taskDesc}
                 inputStyle={styles.inputFields}
-                leftIcon={<Icon name="event-note" size={20} color='#2fd281' style={{paddingTop: '5%'}}/>}
+                leftIcon={<Icon name="event-note" size={20} color={APP_MAIN_BG_COLOR} style={{paddingTop: '5%'}}/>}
                 onChangeText={value => setTaskDesc(value)}
             />
             <Input 
                 value={location}
                 inputStyle={styles.inputFields}
-                leftIcon={<Icon name="location-on" size={20} color='#2fd281' style={{paddingTop: '5%'}}/>}
+                leftIcon={<Icon name="location-on" size={20} color={APP_MAIN_BG_COLOR} style={{paddingTop: '5%'}}/>}
                 onChangeText={value => setLocation(value)}
             />
 
             <Input 
                 value={notes}
                 inputStyle={styles.inputFields}
-                leftIcon={<Icon name="note-alt" size={20} color='#2fd281' style={{paddingTop: '5%'}}/>}
+                leftIcon={<Icon name="note-alt" size={20} color={APP_MAIN_BG_COLOR} style={{paddingTop: '5%'}}/>}
                 onChangeText={value => setNotes(value)}
             />
            
             <Button
                 type='outline'
-                titleStyle={{color:'#2fd281', fontSize: 20}}
-                icon={<Icon name="schedule" size={25} color='#2fd281' />}
-                containerStyle={{marginTop: '5%', width: '90%', alignSelf: 'center', borderWidth: 1.5, borderColor: '#2fd281', borderRadius: 15}}
+                titleStyle={{color:APP_MAIN_BG_COLOR, fontSize: 20}}
+                icon={<Icon name="schedule" size={25} color={APP_MAIN_BG_COLOR} />}
+                containerStyle={{marginTop: '5%', width: '90%', alignSelf: 'center', borderWidth: 1.5, borderColor: APP_MAIN_BG_COLOR, borderRadius: 15}}
                 buttonStyle={{paddingVertical: '3%'}}
                 onPress={() => {setTimePickerVisibility(!timePickerVisible)}}
             >
@@ -154,11 +155,11 @@ export default function AddTaskScreen({ route, navigation }) {
 
             {
                 timeResultVisible &&
-                <Text style={{fontSize: 25, alignSelf: 'center', marginTop: '3%', color: '#2fd281'}}>Deadline Set: <Text style={{fontWeight: 'bold'}}>{timeResult}</Text></Text>
+                <Text style={{fontSize: 25, alignSelf: 'center', marginTop: '3%', color: APP_MAIN_BG_COLOR}}>Deadline Set: <Text style={{fontWeight: 'bold'}}>{timeResult}</Text></Text>
             }
 
             <View style={{flex: 1, flexDirection: 'row', width: '100%', justifyContent: 'center', marginTop: '7%'}}> 
-                <Icon name="repeat" size={25} color='#2fd281' style={{paddingTop: '3%', paddingRight: '1%'}}/>
+                <Icon name="repeat" size={25} color={APP_MAIN_BG_COLOR} style={{paddingTop: '3%', paddingRight: '1%'}}/>
                 <DropDownPicker
                     open={openDDP}
                     value={repeatSetting}
@@ -167,7 +168,7 @@ export default function AddTaskScreen({ route, navigation }) {
                     setValue={setRepeatSetting}
                     setItems={setDDPItems}
                     containerStyle={{width: '90%'}}
-                    style={{backgroudnColor: '#2fd281'}}
+                    style={{backgroudnColor: APP_MAIN_BG_COLOR}}
                     placeholder='Select a repeat setting (repeatedly notify the user until deadline)'
                     zIndex={0}
                 />
@@ -179,7 +180,7 @@ export default function AddTaskScreen({ route, navigation }) {
                     onPress={() => {saveTask()}}
                     containerStyle={styles.saveButton}
                     buttonStyle={{paddingVertical:'14%'}}
-                    color='#2fd281'
+                    color={APP_MAIN_BG_COLOR}
                 >
                     Save
                 </Button>
