@@ -1,19 +1,20 @@
-import { StyleSheet, Text, View } from 'react-native';
+import { ScrollView, View } from "react-native";
+import Profile from "./components/Profile";
+import Badge from "./components/Badge";
+import InProgress from "./components/InProgress";
 
-export default function DashboardScreen({ navigation }) {
-    return (
-        <View style={styles.container}>
-            <Text>Dashboard</Text>
-        </View>
-    )
+export default function DashboardScreen({}) {
+  const imageSources = [
+    require("../assets/yellow_badge.jpeg"),
+    require("../assets/yellow_badge.jpeg"),
+    require("../assets/yellow_badge.jpeg"),
+    require("../assets/yellow_badge.jpeg"),
+  ];
+  return (
+    <ScrollView>
+      <Profile />
+      <Badge imageSources={imageSources} />
+      <InProgress />
+    </ScrollView>
+  );
 }
-
-const styles = StyleSheet.create({
-    container: {
-      flex: 1,
-      backgroundColor: '#fff',
-      alignItems: 'center',
-      justifyContent: 'center',
-    },
-  });
-  
